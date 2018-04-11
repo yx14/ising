@@ -18,10 +18,16 @@ def calculate_and_save_values(lattice, Msamp,Esamp,num_analysis,index,temp,data_
         E_mean = np.average(Esamp[-num_analysis:])
         M_std = np.std(Msamp[-num_analysis:])
         E_std = np.std(Esamp[-num_analysis:])
-        data_array = [np.abs(M_mean),M_std,E_mean,E_std]
+
+        #average over every 1000 datapoints, within [-num_analysis:]
+        M_std_1000 = list(np.std(np.array(Msamp[-num_analysis:]).reshape(-1, 1000), axis=1)) 
+        M_std_std = np.std(M_std_1000) 
+        E_std_1000 = list(np.std(np.array(Esamp[-num_analysis:]).reshape(-1, 1000), axis=1))
+        E_std_std = np.std(E_std_1000)
+        data_array = [np.abs(M_mean),M_std,E_mean,E_std, M_std_std, E_std_std]
     
         #write data to CSV file
-        header_array = ['Temperature','Magnetizatio n Mean','Magnetization Std Dev','Energy Mean','Energy Std Dev']
+        header_array = ['Temperature','Magnetization Mean','Magnetization Std Dev','Energy Mean','Energy Std Dev', 'M_std_std', 'E_std_std']
         append_data_to_file(data_filename, header_array) if index == 0 else None
         append_data_to_file(data_filename, data_array, temp)
 
