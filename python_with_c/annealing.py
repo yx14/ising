@@ -13,7 +13,7 @@ def B_anneal(B, ii, num_steps, num_burnin):
 
     #implement annealing code here
 	if ii < num_burnin:
-		B_a = 2*(1 - float(ii)/num_burnin) 
+		B_a = 5*(1 - float(ii)/num_burnin) 
 	else:
 		B_a = B
 	
