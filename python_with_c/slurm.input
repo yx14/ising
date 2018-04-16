@@ -7,4 +7,4 @@
 #SBATCH -o slurm_%a.out
 
 source grace_environment.sh
-python3 main-multiprocessing_c.py --t_min=1.0 --t_max=4.0 --t_step=0.001 --n=100
+python3 main-multiprocessing_c.py --t_min=1.0 --t_max=4.0 --t_step=0.001 --n=200 --num_steps=120000 --num_analysis=25000 --num_burnin=50000

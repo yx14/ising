@@ -61,8 +61,8 @@ def run_simulation(index,temp,n,num_steps,num_burnin,num_analysis,flip_prop,j,b,
 @click.option('--t_step', default=0.1, prompt='Temp Step Size', help='Temperature Step Size', type=float)
 
 @click.option('--n', prompt='Lattice Size', help='Lattice Size (NxN)',type=int)
-@click.option('--num_steps', default=120000, help='Total Number of Steps',type=int)
-@click.option('--num_analysis', default=25000, help='Number of Steps used in Analysis',type=int)
+@click.option('--num_steps', default=100000, help='Total Number of Steps',type=int)
+@click.option('--num_analysis', default=50000, help='Number of Steps used in Analysis',type=int)
 @click.option('--num_burnin', default=25000, help='Total Number of Burnin Steps',type=int)
 
 @click.option('--j', default=1.0, help='Interaction Strength',type=float)
