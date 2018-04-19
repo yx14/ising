@@ -26,11 +26,16 @@ def run_simulation(index,temp,n,num_steps,num_burnin,num_analysis,flip_prop,j,b,
             E_std = np.std(Esamp[-num_analysis:])
 
             #average over every 1000 datapoints, within [-num_analysis:]
-            M_std_1000 = list(np.std(np.array(Msamp[-num_analysis:]).reshape(-1, 1000), axis=1)) 
-            M_std_std = np.std(M_std_1000) 
-            E_std_1000 = list(np.std(np.array(Esamp[-num_analysis:]).reshape(-1, 1000), axis=1))
-            E_std_std = np.std(E_std_1000)
-            data_array = [np.abs(M_mean),M_std,E_mean,E_std, M_std_std, E_std_std]
+            
+            M_std_1000 = np.std(np.array(Msamp[-num_analysis:]).reshape(-1, 1000), axis=1) 
+            Chi_1000 = M_std_1000**2/temp
+            Chi_mean = np.average(M_std/temp)
+            Chi_std = np.std(Chi_1000) 
+            E_std_1000 = np.std(np.array(Esamp[-num_analysis:]).reshape(-1, 1000), axis=1)
+            Cv_1000 = 1/temp**2*E_std_1000**2
+            Cv_mean = 1/temp**2*E_std**2
+            Cv_std = np.std(Cv_1000)
+            data_array = [np.abs(M_mean),M_std,E_mean,E_std, Chi_mean, Chi_std, Cv_mean, Cv_std]
             
             data_listener.put([temp]+data_array)
 
