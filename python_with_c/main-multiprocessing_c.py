@@ -29,7 +29,7 @@ def run_simulation(index,temp,n,num_steps,num_burnin,num_analysis,flip_prop,j,b,
             
             M_std_1000 = np.std(np.array(Msamp[-num_analysis:]).reshape(-1, 1000), axis=1) 
             Chi_1000 = M_std_1000**2/temp
-            Chi_mean = np.average(M_std/temp)
+            Chi_mean = np.average(M_std**2/temp)
             Chi_std = np.std(Chi_1000) 
             E_std_1000 = np.std(np.array(Esamp[-num_analysis:]).reshape(-1, 1000), axis=1)
             Cv_1000 = 1/temp**2*E_std_1000**2
