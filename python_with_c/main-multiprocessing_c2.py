@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 from ising_c import run_ising #import run_ising function from ising.py
 import multiprocessing as mp
 from IsingLattice import IsingLattice
+import scipy as scipy
 
 def run_simulation(index,temp,n,num_steps,num_burnin,num_analysis,flip_prop,j,b,data_filename,corr_filename,data_listener,corr_listener):
     print("Working on Temp {0}".format(round(temp,4)))
@@ -20,35 +21,25 @@ def run_simulation(index,temp,n,num_steps,num_burnin,num_analysis,flip_prop,j,b,
 
         try:
             #calculate statistical values
+            #calculate statistical values
             M_mean = np.average(Msamp[-num_analysis:])
             E_mean = np.average(Esamp[-num_analysis:])
             M_std = np.std(Msamp[-num_analysis:])
             E_std = np.std(Esamp[-num_analysis:])
-
-            #average over every 1000 datapoints, within [-num_analysis:]
-            #assume that num_analysis is evenly divisible by 1000
-            assert num_analysis/1000. == float (int(num_analysis/1000))
-            M_1000 = np.zeros(1000)
-            for i in xrange(1000):
-                M_1000[-i] = np.std(num_analysis[-(i+1)*1000:-i*1000])
-
             
             Chi_mean = np.average(M_std**2/temp)
-            Chi_mean2 = np.average(Chi_1000)
-            Chi_std = np.std(Chi_1000) 
-            M_std_1000 = np.std(np.array(Msamp[-num_analysis:]).reshape(-1, 1000), axis=1) 
-            print("are the same?")
-            assert M_1000 == M_std_1000
-
-
-            E_std_1000 = np.std(np.array(Esamp[-num_analysis:]).reshape(-1, 1000), axis=1)
-            Chi_1000 = M_std_1000**2/temp
-
-            Cv_1000 = 1/temp**2*E_std_1000**2
             Cv_mean = 1/temp**2*E_std**2
-            Cv_mean2 = np.average(Cv_1000)
-            Cv_std = np.std(Cv_1000)
-            data_array = [np.abs(M_mean),M_std,E_mean,E_std, Chi_mean, Chi_std, Cv_mean, Cv_std, Chi_mean2, Cv_mean2]
+            
+            M_analysis = Msamp[-num_analysis:]
+            E_analysis = Esamp[-num_analysis:]
+            Chi_var = 1/temp**2*(scipy.stats.moment(M_analysis, 4) - scipy.stats.moment(M_analysis, 2)**2)/len(M_analysis)
+            Chi_std = (Chi_var)**0.5
+
+            Cv_var = 1/temp**4*(scipy.stats.moment(E_analysis, 4) - scipy.stats.moment(E_analysis, 2)**2)/len(E_analysis)
+            Cv_std = (Cv_var)**0.5 
+
+            
+            data_array = [np.abs(M_mean),M_std,E_mean,E_std, Chi_mean, Chi_std, Cv_mean, Cv_std]
             
             data_listener.put([temp]+data_array)
 
