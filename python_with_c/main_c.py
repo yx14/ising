@@ -10,6 +10,7 @@ from IsingLattice import IsingLattice
 from tqdm import tqdm #fancy progress bar generator
 from ising_c import run_ising #import run_ising function from ising.py
 from random import shuffle
+from scipy.stats import moment
 
 def calculate_and_save_values(lattice, Msamp,Esamp,num_analysis,index,temp,data_filename,corr_filename):
 
@@ -22,22 +23,14 @@ def calculate_and_save_values(lattice, Msamp,Esamp,num_analysis,index,temp,data_
 
         #average over every 1000 datapoints, within [-num_analysis:]
         M_analysis = Msamp[-num_analysis:]
-        shuffle(M_analysis)
-        M_std_1000 = np.std(np.array(M_analysis).reshape(-1, 1000), axis=1) 
-
-        Chi_1000 = M_std_1000**2/temp
-        Chi_mean = np.average(M_std**2/temp)
-        Chi_mean2 = np.average(Chi_1000)
-        Chi_std = np.std(Chi_1000) 
-            
         E_analysis = Esamp[-num_analysis:]
-        shuffle(E_analysis)
-        E_std_1000 = np.std(np.array(E_analysis).reshape(-1, 1000), axis=1)
-        Cv_1000 = 1/temp**2*E_std_1000**2
+        Chi_var = 1/temp**2*(scipy.stats.moment(M_analysis, 4) - scipy.stats.moment(M_analysis, 2)**2)/len(M_analysis)
+        Chi_std = (Chi_var)**0.5
+        Chi_mean = np.average(M_std**2/temp)
         Cv_mean = 1/temp**2*E_std**2
-        Cv_mean2 = np.average(Cv_1000)
-        Cv_std = np.std(Cv_1000)
-        data_array = [np.abs(M_mean),M_std,E_mean,E_std, Chi_mean, Chi_std, Cv_mean, Cv_std, Chi_mean2, Cv_mean2]
+        Cv_var = 1/temp**4*(scipy.stats.moment(E_analysis, 4) - scipy.stats.moment(E_analysis, 2)**2)/len(E_analysis)
+        Cv_std = (Cv_var)**0.5
+        data_array = [np.abs(M_mean),M_std,E_mean,E_std, Chi_mean, Chi_std, Cv_mean, Cv_std]
             
     
         #write data to CSV file

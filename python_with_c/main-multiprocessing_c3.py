@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 from ising_c import run_ising #import run_ising function from ising.py
 import multiprocessing as mp
 from IsingLattice import IsingLattice
-from scipy.stats import moment
+import scipy as scipy
 
 def run_simulation(index,temp,n,num_steps,num_burnin,num_analysis,flip_prop,j,b,data_filename,corr_filename,data_listener,corr_listener):
     print("Working on Temp {0}".format(round(temp,4)))
@@ -32,10 +32,10 @@ def run_simulation(index,temp,n,num_steps,num_burnin,num_analysis,flip_prop,j,b,
             
             M_analysis = Msamp[-num_analysis:]
             E_analysis = Esamp[-num_analysis:]
-            Chi_var = 1/temp**2*(moment(M_analysis, 4) - moment(M_analysis, 2)**2)/len(M_analysis)
+            Chi_var = 1/temp**2*(scipy.stats.moment(M_analysis, 4) - scipy.stats.moment(M_analysis, 2)**2)/len(M_analysis)
             Chi_std = (Chi_var)**0.5
 
-            Cv_var = 1/temp**4*(moment(E_analysis, 4) - moment(E_analysis, 2)**2)/len(E_analysis)
+            Cv_var = 1/temp**4*(scipy.stats.moment(E_analysis, 4) - scipy.stats.moment(E_analysis, 2)**2)/len(E_analysis)
             Cv_std = (Cv_var)**0.5 
 
             
